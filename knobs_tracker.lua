@@ -18,6 +18,7 @@ end
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "KnobsTrackerGui"
 ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 999999999
 ScreenGui.Parent = PlayerGui
 
 local MainFrame = Instance.new("Frame")
@@ -160,7 +161,16 @@ task.spawn(function()
                 local startTimeOfGain = os.clock()
                 local initialKnobs = lastStableKnobs
                 
-                task.wait(Config.WaitTime) 
+                local checkKnobs = currentKnobs
+                while true do
+                    task.wait(Config.WaitTime)
+                    local nextKnobs = getNumericValue()
+                    if nextKnobs == checkKnobs then
+                        break
+                    else
+                        checkKnobs = nextKnobs
+                    end
+                end
                 
                 local finalKnobs = getNumericValue()
                 local duration = startTimeOfGain - lastChangeTime

@@ -93,6 +93,7 @@ TimeLabel.TextSize = 14
 TimeLabel.Text = "Time: 0,00"
 TimeLabel.TextXAlignment = Enum.TextXAlignment.Left
 TimeLabel.ZIndex = 100000
+PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 TimeLabel.Parent = MainFrame
 
 local dragging, dragInput, dragStart, startPos
@@ -120,11 +121,6 @@ UserInputService.InputChanged:Connect(function(input)
     if input == dragInput and dragging then update(input) end
 end)
 
-local lastStableKnobs = nil
-local lastChangeTime = os.clock()
-local earnHistory = {}
-local isWaitingForAnimation = false
-
 local topbarUI = PlayerGui:WaitForChild("TopbarUI", 10)
 local topbar = topbarUI and topbarUI:WaitForChild("Topbar", 5)
 local handler = topbar and topbar:WaitForChild("StatsTopbarHandler", 5)
@@ -145,50 +141,52 @@ local function formatComma(value)
     return string.gsub(str, "%.", ",")
 end
 
+local stableKnobs = getNumericValue()
+local lastGainTime = os.clock()
+local earnHistory = {}
+local lastChangeDetected = 0
+local checkActive = false
+
+local function processChange()
+    checkActive = true
+    local startTimeOfGain = os.clock()
+    local initialKnobs = stableKnobs
+    
+    while os.clock() - lastChangeDetected < Config.WaitTime do
+        task.wait(0.1)
+    end
+    
+    local finalKnobs = getNumericValue()
+    local duration = startTimeOfGain - lastGainTime
+    local totalDifference = finalKnobs - initialKnobs
+    
+    if totalDifference > 0 then
+        TimeLabel.Text = "Time: " .. formatComma(duration) .. " (+" .. totalDifference .. ")"
+        table.insert(earnHistory, {time = startTimeOfGain, amount = totalDifference})
+        lastGainTime = startTimeOfGain
+    end
+    
+    stableKnobs = finalKnobs
+    checkActive = false
+end
+
+if knobsVal then
+    TextLabel.Text = "Knobs: " .. stableKnobs
+    knobsVal:GetPropertyChangedSignal("Value"):Connect(function()
+        local current = getNumericValue()
+        TextLabel.Text = "Knobs: " .. current
+        
+        if current ~= stableKnobs then
+            lastChangeDetected = os.clock()
+            if not checkActive then
+                task.spawn(processChange)
+            end
+        end
+    end)
+end
+
 task.spawn(function()
     while true do
-        local currentKnobs = getNumericValue()
-        
-        if lastStableKnobs == nil then
-            lastStableKnobs = currentKnobs
-            lastChangeTime = os.clock()
-        end
-        
-        if currentKnobs ~= lastStableKnobs and not isWaitingForAnimation then
-            isWaitingForAnimation = true
-            
-            task.spawn(function()
-                local startTimeOfGain = os.clock()
-                local initialKnobs = lastStableKnobs
-                
-                local checkKnobs = currentKnobs
-                while true do
-                    task.wait(Config.WaitTime)
-                    local nextKnobs = getNumericValue()
-                    if nextKnobs == checkKnobs then
-                        break
-                    else
-                        checkKnobs = nextKnobs
-                    end
-                end
-                
-                local finalKnobs = getNumericValue()
-                local duration = startTimeOfGain - lastChangeTime
-                local totalDifference = finalKnobs - initialKnobs
-                
-                if totalDifference > 0 then
-                    TimeLabel.Text = "Time: " .. formatComma(duration) .. " (+" .. totalDifference .. ")"
-                    table.insert(earnHistory, {time = startTimeOfGain, amount = totalDifference})
-                end
-                
-                lastStableKnobs = finalKnobs
-                lastChangeTime = startTimeOfGain
-                isWaitingForAnimation = false
-            end)
-        end
-        
-        TextLabel.Text = "Knobs: " .. currentKnobs
-        
         local now = os.clock()
         local totalEarnedInWindow = 0
         
@@ -203,6 +201,10 @@ task.spawn(function()
         
         local knobsPerSecond = totalEarnedInWindow / Config.WindowSize
         IncomeLabel.Text = "Knobs/s: " .. formatComma(knobsPerSecond)
+        
+        if ScreenGui.DisplayOrder ~= 999999999 then
+            ScreenGui.DisplayOrder = 999999999
+        end
         
         task.wait(Config.CheckInterval)
     end

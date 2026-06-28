@@ -2,10 +2,10 @@ local Config = {
     WaitTime = 1.1,
     WindowSize = 50,
     CheckInterval = 1.5,
-    DefaultSize = UDim2.new(0, 250, 0, 180),
-    MinSize = Vector2.new(200, 150), 
-    MaxSize = Vector2.new(450, 320), 
-    GuiPosition = UDim2.new(1, -270, 0, 140),
+    DefaultSize = UDim2.new(0, 240, 0, 150),
+    MinSize = Vector2.new(180, 112.5), 
+    MaxSize = Vector2.new(450, 281.25), 
+    GuiPosition = UDim2.new(1, -260, 0, 140),
     BackgroundColor = Color3.fromRGB(18, 16, 15),
     BorderColor = Color3.fromRGB(55, 48, 40),
     TweenTime = 0.2,
@@ -114,7 +114,7 @@ ResizeButton.ZIndex = 100010
 ResizeButton.Parent = MainFrame
 
 local TextLabel = Instance.new("TextLabel")
-TextLabel.Size = UDim2.new(1, -16, 0, 22)
+TextLabel.Size = UDim2.new(1, -16, 0, 20)
 TextLabel.Position = UDim2.new(0, 8, 0, 26)
 TextLabel.BackgroundTransparency = 1
 TextLabel.Font = Enum.Font.GothamBold
@@ -130,8 +130,8 @@ UITX1.MinTextSize = 12
 TextLabel.Parent = MainFrame
 
 local TotalEarnedLabel = Instance.new("TextLabel")
-TotalEarnedLabel.Size = UDim2.new(1, -16, 0, 16)
-TotalEarnedLabel.Position = UDim2.new(0, 8, 0, 50)
+TotalEarnedLabel.Size = UDim2.new(1, -16, 0, 14)
+TotalEarnedLabel.Position = UDim2.new(0, 8, 0, 48)
 TotalEarnedLabel.BackgroundTransparency = 1
 TotalEarnedLabel.Font = Enum.Font.GothamMedium
 TotalEarnedLabel.TextColor3 = Color3.fromRGB(210, 160, 40)
@@ -146,8 +146,8 @@ UITXTotal.MinTextSize = 10
 TotalEarnedLabel.Parent = MainFrame
 
 local IncomeLabel = Instance.new("TextLabel")
-IncomeLabel.Size = UDim2.new(1, -16, 0, 16)
-IncomeLabel.Position = UDim2.new(0, 8, 0, 68)
+IncomeLabel.Size = UDim2.new(1, -16, 0, 14)
+IncomeLabel.Position = UDim2.new(0, 8, 0, 64)
 IncomeLabel.BackgroundTransparency = 1
 IncomeLabel.Font = Enum.Font.GothamMedium
 IncomeLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
@@ -162,8 +162,8 @@ UITX2.MinTextSize = 10
 IncomeLabel.Parent = MainFrame
 
 local TimeLabel = Instance.new("TextLabel")
-TimeLabel.Size = UDim2.new(1, -16, 0, 16)
-TimeLabel.Position = UDim2.new(0, 8, 0, 86)
+TimeLabel.Size = UDim2.new(1, -16, 0, 14)
+TimeLabel.Position = UDim2.new(0, 8, 0, 80)
 TimeLabel.BackgroundTransparency = 1
 TimeLabel.Font = Enum.Font.GothamMedium
 TimeLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
@@ -177,36 +177,50 @@ UITX3.MaxTextSize = 14
 UITX3.MinTextSize = 10
 TimeLabel.Parent = MainFrame
 
-local AutoKeyBtn = Instance.new("TextButton")
-AutoKeyBtn.Size = UDim2.new(0, 110, 0, 24)
-AutoKeyBtn.Position = UDim2.new(0, 8, 0, 110)
-AutoKeyBtn.BackgroundColor3 = Color3.fromRGB(30, 25, 22)
-AutoKeyBtn.Font = Enum.Font.GothamBold
-AutoKeyBtn.Text = "Auto Enter Key"
-AutoKeyBtn.TextColor3 = Color3.fromRGB(170, 160, 150)
-AutoKeyBtn.TextSize = 11
-AutoKeyBtn.ZIndex = 100000
-AutoKeyBtn.Parent = MainFrame
+local KeyLabel = Instance.new("TextLabel")
+KeyLabel.Size = UDim2.new(0, 80, 0, 20)
+KeyLabel.Position = UDim2.new(0, 8, 0, 102)
+KeyLabel.BackgroundTransparency = 1
+KeyLabel.Font = Enum.Font.GothamMedium
+KeyLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+KeyLabel.TextSize = 13
+KeyLabel.Text = "Auto Key"
+KeyLabel.TextXAlignment = Enum.TextXAlignment.Left
+KeyLabel.ZIndex = 100000
+KeyLabel.Parent = MainFrame
 
-local KeyStroke = Instance.new("UIStroke")
-KeyStroke.Color = Color3.fromRGB(55, 48, 40)
-KeyStroke.Thickness = 1
-KeyStroke.Parent = AutoKeyBtn
+local KeyToggleBG = Instance.new("TextButton")
+KeyToggleBG.Size = UDim2.new(0, 36, 0, 18)
+KeyToggleBG.Position = UDim2.new(0, 95, 0, 103)
+KeyToggleBG.BackgroundColor3 = Color3.fromRGB(30, 25, 22)
+KeyToggleBG.Text = ""
+KeyToggleBG.ZIndex = 100000
+KeyToggleBG.Parent = MainFrame
 
-local KeyCorner = Instance.new("UICorner")
-KeyCorner.CornerRadius = UDim.new(0, 4)
-KeyCorner.Parent = AutoKeyBtn
+local KeyToggleStroke = Instance.new("UIStroke")
+KeyToggleStroke.Color = Color3.fromRGB(55, 48, 40)
+KeyToggleStroke.Thickness = 1
+KeyToggleStroke.Parent = KeyToggleBG
 
-AutoKeyBtn.MouseEnter:Connect(function()
-    TweenService:Create(AutoKeyBtn, TweenInfo.new(Config.TweenTime), {BackgroundColor3 = Color3.fromRGB(45, 38, 33), TextColor3 = Color3.fromRGB(240, 180, 50)}):Play()
-end)
-AutoKeyBtn.MouseLeave:Connect(function()
-    TweenService:Create(AutoKeyBtn, TweenInfo.new(Config.TweenTime), {BackgroundColor3 = Color3.fromRGB(30, 25, 22), TextColor3 = Color3.fromRGB(170, 160, 150)}):Play()
-end)
+local KeyToggleCorner = Instance.new("UICorner")
+KeyToggleCorner.CornerRadius = UDim.new(0, 9)
+KeyToggleCorner.Parent = KeyToggleBG
+
+local KeyToggleSlider = Instance.new("Frame")
+KeyToggleSlider.Size = UDim2.new(0, 14, 0, 14)
+KeyToggleSlider.Position = UDim2.new(0, 2, 0, 2)
+KeyToggleSlider.BackgroundColor3 = Color3.fromRGB(120, 110, 100)
+KeyToggleSlider.BorderSizePixel = 0
+KeyToggleSlider.ZIndex = 100005
+KeyToggleSlider.Parent = KeyToggleBG
+
+local KeySliderCorner = Instance.new("UICorner")
+KeySliderCorner.CornerRadius = UDim.new(0, 7)
+KeySliderCorner.Parent = KeyToggleSlider
 
 local AfkLabel = Instance.new("TextLabel")
-AfkLabel.Size = UDim2.new(0, 60, 0, 24)
-AfkLabel.Position = UDim2.new(0, 8, 0, 144)
+AfkLabel.Size = UDim2.new(0, 80, 0, 20)
+AfkLabel.Position = UDim2.new(0, 8, 0, 124)
 AfkLabel.BackgroundTransparency = 1
 AfkLabel.Font = Enum.Font.GothamMedium
 AfkLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
@@ -218,7 +232,7 @@ AfkLabel.Parent = MainFrame
 
 local ToggleBG = Instance.new("TextButton")
 ToggleBG.Size = UDim2.new(0, 36, 0, 18)
-ToggleBG.Position = UDim2.new(0, 75, 0, 147)
+ToggleBG.Position = UDim2.new(0, 95, 0, 125)
 ToggleBG.BackgroundColor3 = Color3.fromRGB(30, 25, 22)
 ToggleBG.Text = ""
 ToggleBG.ZIndex = 100000
@@ -259,7 +273,9 @@ MainFrame.InputBegan:Connect(function(input)
                     dragStart = input.Position
                     startPos = MainFrame.Position
                     input.Changed:Connect(function()
-                        if input.UserInputState == Enum.UserInputState.End then dragging = false end
+                        if input.UserInputState == Enum.UserInputState.End then
+                            dragging = false
+                        end
                     end)
                 end
             end
@@ -289,7 +305,9 @@ ResizeButton.InputBegan:Connect(function(input)
         resizeStartPos = input.Position
         resizeStartSize = MainFrame.AbsoluteSize
         input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then resizing = false end
+            if input.UserInputState == Enum.UserInputState.End then
+                resizing = false
+            end
         end)
     end
 end)
@@ -298,27 +316,30 @@ UserInputService.InputChanged:Connect(function(input)
     if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local delta = input.Position - resizeStartPos
         local newX = math.clamp(resizeStartSize.X + delta.X, Config.MinSize.X, Config.MaxSize.X)
-        local aspectRatio = 180 / 250
+        local aspectRatio = 150 / 240
         local newY = math.clamp(newX * aspectRatio, Config.MinSize.Y, Config.MaxSize.Y)
         newX = newY / aspectRatio
         TweenService:Create(MainFrame, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {
             Size = UDim2.new(0, newX, 0, newY)
         }):Play()
-        TextLabel.Size = UDim2.new(1, -16, 0, newY * 0.12)
-        TextLabel.Position = UDim2.new(0, 8, 0, newY * 0.14)
+        TextLabel.Size = UDim2.new(1, -16, 0, newY * 0.13)
+        TextLabel.Position = UDim2.new(0, 8, 0, newY * 0.17)
         TotalEarnedLabel.Size = UDim2.new(1, -16, 0, newY * 0.09)
-        TotalEarnedLabel.Position = UDim2.new(0, 8, 0, 26 + (newY * 0.13))
+        TotalEarnedLabel.Position = UDim2.new(0, 8, 0, newY * 0.32)
         IncomeLabel.Size = UDim2.new(1, -16, 0, newY * 0.09)
-        IncomeLabel.Position = UDim2.new(0, 8, 0, 26 + (newY * 0.23))
+        IncomeLabel.Position = UDim2.new(0, 8, 0, newY * 0.42)
         TimeLabel.Size = UDim2.new(1, -16, 0, newY * 0.09)
-        TimeLabel.Position = UDim2.new(0, 8, 0, 26 + (newY * 0.33))
-        AutoKeyBtn.Size = UDim2.new(0, newX * 0.44, 0, newY * 0.13)
-        AutoKeyBtn.Position = UDim2.new(0, 8, 0, newY * 0.61)
-        AfkLabel.Size = UDim2.new(0, newX * 0.24, 0, newY * 0.13)
-        AfkLabel.Position = UDim2.new(0, 8, 0, newY * 0.8)
-        ToggleBG.Size = UDim2.new(0, newX * 0.14, 0, newY * 0.1)
-        ToggleBG.Position = UDim2.new(0, 8 + (newX * 0.26), 0, newY * 0.81)
-        ToggleSlider.Size = UDim2.new(0, (newY * 0.1) - 4, 0, (newY * 0.1) - 4)
+        TimeLabel.Position = UDim2.new(0, 8, 0, newY * 0.53)
+        KeyLabel.Size = UDim2.new(0, newX * 0.33, 0, newY * 0.13)
+        KeyLabel.Position = UDim2.new(0, 8, 0, newY * 0.68)
+        KeyToggleBG.Size = UDim2.new(0, newX * 0.15, 0, newY * 0.12)
+        KeyToggleBG.Position = UDim2.new(0, 8 + (newX * 0.36), 0, newY * 0.68)
+        KeyToggleSlider.Size = UDim2.new(0, (newY * 0.12) - 4, 0, (newY * 0.12) - 4)
+        AfkLabel.Size = UDim2.new(0, newX * 0.33, 0, newY * 0.13)
+        AfkLabel.Position = UDim2.new(0, 8, 0, newY * 0.82)
+        ToggleBG.Size = UDim2.new(0, newX * 0.15, 0, newY * 0.12)
+        ToggleBG.Position = UDim2.new(0, 8 + (newX * 0.36), 0, newY * 0.83)
+        ToggleSlider.Size = UDim2.new(0, (newY * 0.12) - 4, 0, (newY * 0.12) - 4)
     end
 end)
 
@@ -398,18 +419,49 @@ if knobsVal then
     end)
 end
 
-AutoKeyBtn.MouseButton1Click:Connect(function()
-    for _, gui in ipairs(PlayerGui:GetChildren()) do
-        if gui:IsA("ScreenGui") and gui.Name ~= "KnobsTrackerGui" then
-            for _, box in ipairs(gui:GetDescendants()) do
-                if box:IsA("TextBox") and box.Visible then
-                    box.Text = Config.AutoKey
-                    local parent = box.Parent
-                    if parent then
-                        local btn = parent:FindFirstChild("Check") or parent:FindFirstChild("Redeem") or parent:FindFirstChild("Enter") or parent:FindFirstChildOfClass("TextButton")
-                        if btn and btn:IsA("TextButton") then
-                            btn:Activate()
+local autoKeyEnabled = false
+KeyToggleBG.MouseButton1Click:Connect(function()
+    autoKeyEnabled = not autoKeyEnabled
+    if autoKeyEnabled then
+        TweenService:Create(KeyToggleBG, TweenInfo.new(Config.TweenTime), {BackgroundColor3 = Color3.fromRGB(45, 38, 33)}):Play()
+        TweenService:Create(KeyToggleStroke, TweenInfo.new(Config.TweenTime), {Color = Color3.fromRGB(240, 180, 50)}):Play()
+        TweenService:Create(KeyToggleSlider, TweenInfo.new(Config.TweenTime), {Position = UDim2.new(1, -KeyToggleSlider.Size.X.Offset - 2, 0, 2), BackgroundColor3 = Color3.fromRGB(240, 180, 50)}):Play()
+    else
+        TweenService:Create(KeyToggleBG, TweenInfo.new(Config.TweenTime), {BackgroundColor3 = Color3.fromRGB(30, 25, 22)}):Play()
+        TweenService:Create(KeyToggleStroke, TweenInfo.new(Config.TweenTime), {Color = Color3.fromRGB(55, 48, 40)}):Play()
+        TweenService:Create(KeyToggleSlider, TweenInfo.new(Config.TweenTime), {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(120, 110, 100)}):Play()
+    end
+end)
+
+task.spawn(function()
+    while true do
+        task.wait(1)
+        if autoKeyEnabled then
+            for _, gui in ipairs(PlayerGui:GetChildren()) do
+                if gui:IsA("ScreenGui") and gui.Name ~= "KnobsTrackerGui" then
+                    local hasTitle = false
+                    local hasCopyLink = false
+                    local targetBox = nil
+                    local submitBtn = nil
+                    for _, desc in ipairs(gui:GetDescendants()) do
+                        if desc:IsA("TextLabel") and desc.Text == "KEY REQUIRED" then
+                            hasTitle = true
                         end
+                        if desc:IsA("TextButton") and string.find(desc.Text, "COPY KEY LINK") then
+                            hasCopyLink = true
+                        end
+                        if desc:IsA("TextBox") and desc.PlaceholderText == "Enter key..." then
+                            targetBox = desc
+                        end
+                        if desc:IsA("TextButton") and desc.Text == "SUBMIT" then
+                            submitBtn = desc
+                        end
+                    end
+                    if hasTitle and hasCopyLink and targetBox and submitBtn then
+                        targetBox.Text = Config.AutoKey
+                        task.wait(0.1)
+                        submitBtn:Activate()
+                        break
                     end
                 end
             end

@@ -138,7 +138,7 @@ IncomeLabel.Font = Enum.Font.GothamMedium
 IncomeLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
 IncomeLabel.TextSize = 14
 IncomeLabel.TextScaled = true
-IncomeLabel.Text = "Knobs/s: 0,00"
+IncomeLabel.Text = "Knobs/s: ~0"
 IncomeLabel.TextXAlignment = Enum.TextXAlignment.Left
 IncomeLabel.ZIndex = 100000
 local UITX2 = Instance.new("UITextSizeConstraint", IncomeLabel)
@@ -258,6 +258,7 @@ local stableKnobs = getNumericValue()
 local firstStartTime = nil
 local lastGainTime = os.clock()
 local earnHistory = {}
+local recentKpsList = {}
 local lastChangeDetected = 0
 local checkActive = false
 local currentProfitText = ""
@@ -266,7 +267,6 @@ local function processChange()
     checkActive = true
     local startTimeOfGain = os.clock()
     local initialKnobs = stableKnobs
-    
     if firstStartTime == nil then
         firstStartTime = startTimeOfGain
     end
@@ -313,15 +313,26 @@ task.spawn(function()
                 totalEarnedInWindow = totalEarnedInWindow + record.amount
             end
         end
-        local knobsPerSecond = 0
+        local displayKps = 0
         if firstStartTime ~= nil then
             local activeTime = now - firstStartTime
             local divisor = math.min(activeTime, Config.WindowSize)
-            if divisor > 0 then
-                knobsPerSecond = totalEarnedInWindow / divisor
+            local rawKps = totalEarnedInWindow / divisor
+            if rawKps > 0 then
+                table.insert(recentKpsList, rawKps)
+                if #recentKpsList > 5 then
+                    table.remove(recentKpsList, 1)
+                end
+                local sortedList = {}
+                for _, v in ipairs(recentKpsList) do
+                    table.insert(sortedList, v)
+                end
+                table.sort(sortedList)
+                local medianKps = sortedList[math.ceil(#sortedList / 2)] or rawKps
+                displayKps = math.round(medianKps)
             end
         end
-        IncomeLabel.Text = "Knobs/s: " .. formatComma(knobsPerSecond)
+        IncomeLabel.Text = "Knobs/s: ~" .. tostring(displayKps)
         if ScreenGui.DisplayOrder ~= 999999999 then
             ScreenGui.DisplayOrder = 999999999
         end

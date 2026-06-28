@@ -3,8 +3,8 @@ local Config = {
     WindowSize = 30,
     CheckInterval = 0.3,
     DefaultSize = UDim2.new(0, 240, 0, 110),
-    MinSize = Vector2.new(180, 95),
-    MaxSize = Vector2.new(450, 220),
+    MinSize = Vector2.new(180, 82.5), 
+    MaxSize = Vector2.new(450, 206.25), 
     GuiPosition = UDim2.new(1, -260, 0, 140),
     BackgroundColor = Color3.fromRGB(18, 16, 15),
     BorderColor = Color3.fromRGB(55, 48, 40),
@@ -163,17 +163,22 @@ UITX3.MinTextSize = 10
 TimeLabel.Parent = MainFrame
 
 local dragging, dragInput, dragStart, startPos
+local resizing = false
+local resizeStartPos, resizeStartSize
+
 MainFrame.InputBegan:Connect(function(input)
     if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not UserInputService:GetFocusedTextBox() then
-        local mousePos = input.Position
-        if mousePos.X < CloseButton.AbsolutePosition.X or mousePos.Y > CloseButton.AbsolutePosition.Y + 20 then
-            if mousePos.X < ResizeButton.AbsolutePosition.X or mousePos.Y < ResizeButton.AbsolutePosition.Y then
-                dragging = true
-                dragStart = input.Position
-                startPos = MainFrame.Position
-                input.Changed:Connect(function()
-                    if input.UserInputState == Enum.UserInputState.End then dragging = false end
-                end)
+        if not resizing then
+            local mousePos = input.Position
+            if mousePos.X < CloseButton.AbsolutePosition.X or mousePos.Y > CloseButton.AbsolutePosition.Y + 20 then
+                if mousePos.X < ResizeButton.AbsolutePosition.X or mousePos.Y < ResizeButton.AbsolutePosition.Y then
+                    dragging = true
+                    dragStart = input.Position
+                    startPos = MainFrame.Position
+                    input.Changed:Connect(function()
+                        if input.UserInputState == Enum.UserInputState.End then dragging = false end
+                    end)
+                end
             end
         end
     end
@@ -184,7 +189,7 @@ MainFrame.InputChanged:Connect(function(input)
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
+    if input == dragInput and dragging and not resizing then
         local delta = input.Position - dragStart
         TweenService:Create(MainFrame, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {
             Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
@@ -192,12 +197,10 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
-local resizing = false
-local resizeStartPos, resizeStartSize
-
 ResizeButton.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         resizing = true
+        dragging = false
         resizeStartPos = input.Position
         resizeStartSize = MainFrame.AbsoluteSize
         
@@ -210,8 +213,11 @@ end)
 UserInputService.InputChanged:Connect(function(input)
     if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local delta = input.Position - resizeStartPos
+        
         local newX = math.clamp(resizeStartSize.X + delta.X, Config.MinSize.X, Config.MaxSize.X)
-        local newY = math.clamp(resizeStartSize.Y + delta.Y, Config.MinSize.Y, Config.MaxSize.Y)
+        local aspectRatio = 110 / 240
+        local newY = math.clamp(newX * aspectRatio, Config.MinSize.Y, Config.MaxSize.Y)
+        newX = newY / aspectRatio
         
         TweenService:Create(MainFrame, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {
             Size = UDim2.new(0, newX, 0, newY)
@@ -264,11 +270,9 @@ local function processChange()
     if firstStartTime == nil then
         firstStartTime = startTimeOfGain
     end
-    
     while os.clock() - lastChangeDetected < Config.WaitTime do
         task.wait(0.1)
     end
-    
     local finalKnobs = getNumericValue()
     local duration = startTimeOfGain - lastGainTime
     local totalDifference = finalKnobs - initialKnobs

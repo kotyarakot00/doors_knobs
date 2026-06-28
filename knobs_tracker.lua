@@ -1,7 +1,7 @@
 local Config = {
     WaitTime = 1.1,
     WindowSize = 50,
-    CheckInterval = 0.3,
+    CheckInterval = 1,
     DefaultSize = UDim2.new(0, 240, 0, 110),
     MinSize = Vector2.new(180, 82.5), 
     MaxSize = Vector2.new(450, 206.25), 

@@ -138,7 +138,7 @@ IncomeLabel.Font = Enum.Font.GothamMedium
 IncomeLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
 IncomeLabel.TextSize = 14
 IncomeLabel.TextScaled = true
-IncomeLabel.Text = "Knobs/s: ~0"
+IncomeLabel.Text = "Knobs/s: 0"
 IncomeLabel.TextXAlignment = Enum.TextXAlignment.Left
 IncomeLabel.ZIndex = 100000
 local UITX2 = Instance.new("UITextSizeConstraint", IncomeLabel)
@@ -314,13 +314,14 @@ task.spawn(function()
             end
         end
         local displayKps = 0
+        local useTilde = false
         if firstStartTime ~= nil then
             local activeTime = now - firstStartTime
             local divisor = math.min(activeTime, Config.WindowSize)
             local rawKps = totalEarnedInWindow / divisor
             if rawKps > 0 then
                 table.insert(recentKpsList, rawKps)
-                if #recentKpsList > 5 then
+                if #recentKpsList > 15 then
                     table.remove(recentKpsList, 1)
                 end
                 local sortedList = {}
@@ -330,9 +331,16 @@ task.spawn(function()
                 table.sort(sortedList)
                 local medianKps = sortedList[math.ceil(#sortedList / 2)] or rawKps
                 displayKps = math.round(medianKps)
+                if displayKps > 0 then
+                    useTilde = true
+                end
             end
         end
-        IncomeLabel.Text = "Knobs/s: ~" .. tostring(displayKps)
+        if useTilde then
+            IncomeLabel.Text = "Knobs/s: ~" .. tostring(displayKps)
+        else
+            IncomeLabel.Text = "Knobs/s: " .. tostring(displayKps)
+        end
         if ScreenGui.DisplayOrder ~= 999999999 then
             ScreenGui.DisplayOrder = 999999999
         end

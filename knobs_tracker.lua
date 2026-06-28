@@ -2,12 +2,18 @@ local Config = {
     WaitTime = 1.1,
     WindowSize = 30,
     CheckInterval = 0.3,
-    GuiSize = UDim2.new(0, 240, 0, 110),
-    GuiPosition = UDim2.new(1, -260, 0, 140)
+    DefaultSize = UDim2.new(0, 240, 0, 110),
+    MinSize = Vector2.new(180, 95),
+    MaxSize = Vector2.new(400, 200),
+    GuiPosition = UDim2.new(1, -260, 0, 140),
+    BackgroundColor = Color3.fromRGB(18, 16, 15),
+    BorderColor = Color3.fromRGB(55, 48, 40),
+    TweenTime = 0.2
 }
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
@@ -22,17 +28,18 @@ ScreenGui.DisplayOrder = 999999999
 ScreenGui.Parent = PlayerGui
 
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = Config.GuiSize
+MainFrame.Size = Config.DefaultSize
 MainFrame.Position = Config.GuiPosition
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-MainFrame.BackgroundTransparency = 0.15
+MainFrame.BackgroundColor3 = Config.BackgroundColor
+MainFrame.BackgroundTransparency = 0.02
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
+MainFrame.ClipsDescendants = true
 MainFrame.ZIndex = 99999
 MainFrame.Parent = ScreenGui
 
 local UIStroke = Instance.new("UIStroke")
-UIStroke.Color = Color3.fromRGB(45, 40, 35)
+UIStroke.Color = Config.BorderColor
 UIStroke.Thickness = 2
 UIStroke.Parent = MainFrame
 
@@ -41,12 +48,13 @@ UICorner.CornerRadius = UDim.new(0, 6)
 UICorner.Parent = MainFrame
 
 local HeaderLabel = Instance.new("TextLabel")
-HeaderLabel.Size = UDim2.new(1, 0, 0, 22)
+HeaderLabel.Size = UDim2.new(1, -35, 0, 22)
+HeaderLabel.Position = UDim2.new(0, 8, 0, 0)
 HeaderLabel.BackgroundTransparency = 1
 HeaderLabel.Font = Enum.Font.GothamMedium
-HeaderLabel.TextColor3 = Color3.fromRGB(140, 130, 120)
+HeaderLabel.TextColor3 = Color3.fromRGB(150, 140, 130)
 HeaderLabel.TextSize = 12
-HeaderLabel.Text = "  Doors Knobs Tracker"
+HeaderLabel.Text = "Doors Knobs Tracker"
 HeaderLabel.TextXAlignment = Enum.TextXAlignment.Left
 HeaderLabel.ZIndex = 100000
 HeaderLabel.Parent = MainFrame
@@ -54,10 +62,62 @@ HeaderLabel.Parent = MainFrame
 local Line = Instance.new("Frame")
 Line.Size = UDim2.new(1, -16, 0, 1)
 Line.Position = UDim2.new(0, 8, 0, 22)
-Line.BackgroundColor3 = Color3.fromRGB(45, 40, 35)
+Line.BackgroundColor3 = Config.BorderColor
 Line.BorderSizePixel = 0
 Line.ZIndex = 100000
 Line.Parent = MainFrame
+
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 20, 0, 20)
+CloseButton.Position = UDim2.new(1, -24, 0, 1)
+CloseButton.BackgroundTransparency = 1
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.Text = "×"
+CloseButton.TextColor3 = Color3.fromRGB(150, 140, 130)
+CloseButton.TextSize = 16
+CloseButton.ZIndex = 100005
+CloseButton.Parent = MainFrame
+
+CloseButton.MouseEnter:Connect(function()
+    TweenService:Create(CloseButton, TweenInfo.new(Config.TweenTime), {TextColor3 = Color3.fromRGB(230, 70, 70)}):Play()
+end)
+CloseButton.MouseLeave:Connect(function()
+    TweenService:Create(CloseButton, TweenInfo.new(Config.TweenTime), {TextColor3 = Color3.fromRGB(150, 140, 130)}):Play()
+end)
+
+CloseButton.MouseButton1Click:Connect(function()
+    local fadeFrame = TweenService:Create(MainFrame, TweenInfo.new(Config.TweenTime), {BackgroundTransparency = 1})
+    local fadeStroke = TweenService:Create(UIStroke, TweenInfo.new(Config.TweenTime), {Transparency = 1})
+    
+    fadeFrame:Play()
+    fadeStroke:Play()
+    
+    for _, child in ipairs(MainFrame:GetChildren()) do
+        if child:IsA("TextLabel") or child:IsA("TextButton") then
+            TweenService:Create(child, TweenInfo.new(Config.TweenTime), {TextTransparency = 1}):Play()
+        elseif child:IsA("Frame") and child ~= MainFrame then
+            TweenService:Create(child, TweenInfo.new(Config.TweenTime), {BackgroundTransparency = 1}):Play()
+        end
+    end
+    
+    fadeFrame.Completed:Connect(function()
+        ScreenGui:Destroy()
+    end)
+end)
+
+local ResizeButton = Instance.new("ImageButton")
+ResizeButton.Size = UDim2.new(0, 12, 0, 12)
+ResizeButton.Position = UDim2.new(1, -12, 1, -12)
+ResizeButton.BackgroundTransparency = 1
+ResizeButton.Image = "rbxassetid://6031093113"
+ResizeButton.ImageColor3 = Color3.fromRGB(80, 70, 60)
+ResizeButton.ZIndex = 100010
+ResizeButton.Parent = MainFrame
+
+local function autoScaleText()
+    local currentWidth = MainFrame.AbsoluteSize.X
+    HeaderLabel.TextSize = math.clamp(currentWidth / 20, 10, 12)
+end
 
 local TextLabel = Instance.new("TextLabel")
 TextLabel.Size = UDim2.new(1, -16, 0, 24)
@@ -93,23 +153,19 @@ TimeLabel.TextSize = 14
 TimeLabel.Text = "Time: 0,00"
 TimeLabel.TextXAlignment = Enum.TextXAlignment.Left
 TimeLabel.ZIndex = 100000
-PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 TimeLabel.Parent = MainFrame
 
 local dragging, dragInput, dragStart, startPos
-local function update(input)
-    local delta = input.Position - dragStart
-    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-
 MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = MainFrame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then dragging = false end
-        end)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not UserInputService:GetFocusedTextBox() then
+        if input.Position.X < CloseButton.AbsolutePosition.X and input.Position.Y < Line.AbsolutePosition.Y + 10 then
+            dragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end)
+        end
     end
 end)
 
@@ -118,7 +174,41 @@ MainFrame.InputChanged:Connect(function(input)
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then update(input) end
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        TweenService:Create(MainFrame, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {
+            Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        }):Play()
+    end
+end)
+
+local resizing = false
+local resizeStartPos, resizeStartSize
+
+ResizeButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        resizing = true
+        resizeStartPos = input.Position
+        resizeStartSize = MainFrame.AbsoluteSize
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then resizing = false end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - resizeStartPos
+        local newX = math.clamp(resizeStartSize.X + delta.X, Config.MinSize.X, Config.MaxSize.X)
+        local newY = math.clamp(resizeStartSize.Y + delta.Y, Config.MinSize.Y, Config.MaxSize.Y)
+        
+        TweenService:Create(MainFrame, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {
+            Size = UDim2.new(0, newX, 0, newY)
+        }):Play()
+        
+        autoScaleText()
+    end
 end)
 
 local topbarUI = PlayerGui:WaitForChild("TopbarUI", 10)
@@ -189,7 +279,6 @@ task.spawn(function()
     while true do
         local now = os.clock()
         local totalEarnedInWindow = 0
-        
         for i = #earnHistory, 1, -1 do
             local record = earnHistory[i]
             if now - record.time > Config.WindowSize then
@@ -198,14 +287,11 @@ task.spawn(function()
                 totalEarnedInWindow = totalEarnedInWindow + record.amount
             end
         end
-        
         local knobsPerSecond = totalEarnedInWindow / Config.WindowSize
         IncomeLabel.Text = "Knobs/s: " .. formatComma(knobsPerSecond)
-        
         if ScreenGui.DisplayOrder ~= 999999999 then
             ScreenGui.DisplayOrder = 999999999
         end
-        
         task.wait(Config.CheckInterval)
     end
 end)

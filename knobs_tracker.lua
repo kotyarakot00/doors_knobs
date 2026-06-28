@@ -62,7 +62,7 @@ HeaderLabel.Parent = MainFrame
 local Line = Instance.new("Frame")
 Line.Size = UDim2.new(1, -16, 0, 1)
 Line.Position = UDim2.new(0, 8, 0, 22)
-Line.BackgroundColor3 = Config.BorderColor
+Line.BackgroundColor3 = Color3.fromRGB(45, 40, 35)
 Line.BorderSizePixel = 0
 Line.ZIndex = 100000
 Line.Parent = MainFrame
@@ -232,6 +232,7 @@ local function formatComma(value)
 end
 
 local stableKnobs = getNumericValue()
+local firstStartTime = os.clock()
 local lastGainTime = os.clock()
 local earnHistory = {}
 local lastChangeDetected = 0
@@ -287,7 +288,12 @@ task.spawn(function()
                 totalEarnedInWindow = totalEarnedInWindow + record.amount
             end
         end
-        local knobsPerSecond = totalEarnedInWindow / Config.WindowSize
+        local activeTime = now - firstStartTime
+        local divisor = math.min(activeTime, Config.WindowSize)
+        local knobsPerSecond = 0
+        if divisor > 0.5 then
+            knobsPerSecond = totalEarnedInWindow / divisor
+        end
         IncomeLabel.Text = "Knobs/s: " .. formatComma(knobsPerSecond)
         if ScreenGui.DisplayOrder ~= 999999999 then
             ScreenGui.DisplayOrder = 999999999

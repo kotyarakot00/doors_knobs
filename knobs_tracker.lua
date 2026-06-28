@@ -317,16 +317,8 @@ task.spawn(function()
         if firstStartTime ~= nil then
             local activeTime = now - firstStartTime
             local divisor = math.min(activeTime, Config.WindowSize)
-            local rawKps = totalEarnedInWindow / divisor
-            if rawKps > 0 then
-                local expectedRoundIncome = 49
-                local expectedRoundTime = 8.16
-                local targetKps = expectedRoundIncome / expectedRoundTime
-                if math.abs(rawKps - targetKps) < 0.9 then
-                    knobsPerSecond = targetKps
-                else
-                    knobsPerSecond = rawKps
-                end
+            if divisor > 0 then
+                knobsPerSecond = totalEarnedInWindow / divisor
             end
         end
         IncomeLabel.Text = "Knobs/s: " .. formatComma(knobsPerSecond)

@@ -2,9 +2,9 @@ local Config = {
     WaitTime = 1.1,
     WindowSize = 50,
     CheckInterval = 1.5,
-    DefaultSize = UDim2.new(0, 240, 0, 150),
-    MinSize = Vector2.new(180, 112.5), 
-    MaxSize = Vector2.new(450, 281.25), 
+    DefaultSize = UDim2.new(0, 240, 0, 115),
+    MinSize = Vector2.new(180, 86.25),
+    MaxSize = Vector2.new(450, 215.625),
     GuiPosition = UDim2.new(1, -260, 0, 140),
     BackgroundColor = Color3.fromRGB(18, 16, 15),
     BorderColor = Color3.fromRGB(55, 48, 40),
@@ -232,20 +232,20 @@ UserInputService.InputChanged:Connect(function(input)
     if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local delta = input.Position - resizeStartPos
         local newX = math.clamp(resizeStartSize.X + delta.X, Config.MinSize.X, Config.MaxSize.X)
-        local aspectRatio = 150 / 240
+        local aspectRatio = 115 / 240
         local newY = math.clamp(newX * aspectRatio, Config.MinSize.Y, Config.MaxSize.Y)
         newX = newY / aspectRatio
         TweenService:Create(MainFrame, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {
             Size = UDim2.new(0, newX, 0, newY)
         }):Play()
-        TextLabel.Size = UDim2.new(1, -16, 0, newY * 0.13)
-        TextLabel.Position = UDim2.new(0, 8, 0, newY * 0.17)
-        TotalEarnedLabel.Size = UDim2.new(1, -16, 0, newY * 0.09)
-        TotalEarnedLabel.Position = UDim2.new(0, 8, 0, newY * 0.32)
-        IncomeLabel.Size = UDim2.new(1, -16, 0, newY * 0.09)
-        IncomeLabel.Position = UDim2.new(0, 8, 0, newY * 0.42)
-        TimeLabel.Size = UDim2.new(1, -16, 0, newY * 0.09)
-        TimeLabel.Position = UDim2.new(0, 8, 0, newY * 0.53)
+        TextLabel.Size = UDim2.new(1, -16, 0, newY * 0.17)
+        TextLabel.Position = UDim2.new(0, 8, 0, newY * 0.22)
+        TotalEarnedLabel.Size = UDim2.new(1, -16, 0, newY * 0.12)
+        TotalEarnedLabel.Position = UDim2.new(0, 8, 0, newY * 0.41)
+        IncomeLabel.Size = UDim2.new(1, -16, 0, newY * 0.12)
+        IncomeLabel.Position = UDim2.new(0, 8, 0, newY * 0.55)
+        TimeLabel.Size = UDim2.new(1, -16, 0, newY * 0.12)
+        TimeLabel.Position = UDim2.new(0, 8, 0, newY * 0.69)
     end
 end)
 

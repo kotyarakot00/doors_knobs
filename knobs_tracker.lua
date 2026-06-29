@@ -8,14 +8,12 @@ local Config = {
     GuiPosition = UDim2.new(1, -260, 0, 140),
     BackgroundColor = Color3.fromRGB(18, 16, 15),
     BorderColor = Color3.fromRGB(55, 48, 40),
-    TweenTime = 0.2,
-    AutoKey = "DOORSJAYOMGKEY"
+    TweenTime = 0.2
 }
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
-local VirtualUser = game:GetService("VirtualUser")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
@@ -177,88 +175,6 @@ UITX3.MaxTextSize = 14
 UITX3.MinTextSize = 10
 TimeLabel.Parent = MainFrame
 
-local KeyLabel = Instance.new("TextLabel")
-KeyLabel.Size = UDim2.new(0, 80, 0, 20)
-KeyLabel.Position = UDim2.new(0, 8, 0, 102)
-KeyLabel.BackgroundTransparency = 1
-KeyLabel.Font = Enum.Font.GothamMedium
-KeyLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-KeyLabel.TextSize = 13
-KeyLabel.Text = "Auto Key"
-KeyLabel.TextXAlignment = Enum.TextXAlignment.Left
-KeyLabel.ZIndex = 100000
-KeyLabel.Parent = MainFrame
-
-local KeyToggleBG = Instance.new("TextButton")
-KeyToggleBG.Size = UDim2.new(0, 36, 0, 18)
-KeyToggleBG.Position = UDim2.new(0, 95, 0, 103)
-KeyToggleBG.BackgroundColor3 = Color3.fromRGB(30, 25, 22)
-KeyToggleBG.Text = ""
-KeyToggleBG.ZIndex = 100000
-KeyToggleBG.Parent = MainFrame
-
-local KeyToggleStroke = Instance.new("UIStroke")
-KeyToggleStroke.Color = Color3.fromRGB(55, 48, 40)
-KeyToggleStroke.Thickness = 1
-KeyToggleStroke.Parent = KeyToggleBG
-
-local KeyToggleCorner = Instance.new("UICorner")
-KeyToggleCorner.CornerRadius = UDim.new(0, 9)
-KeyToggleCorner.Parent = KeyToggleBG
-
-local KeyToggleSlider = Instance.new("Frame")
-KeyToggleSlider.Size = UDim2.new(0, 14, 0, 14)
-KeyToggleSlider.Position = UDim2.new(0, 2, 0, 2)
-KeyToggleSlider.BackgroundColor3 = Color3.fromRGB(120, 110, 100)
-KeyToggleSlider.BorderSizePixel = 0
-KeyToggleSlider.ZIndex = 100005
-KeyToggleSlider.Parent = KeyToggleBG
-
-local KeySliderCorner = Instance.new("UICorner")
-KeySliderCorner.CornerRadius = UDim.new(0, 7)
-KeySliderCorner.Parent = KeyToggleSlider
-
-local AfkLabel = Instance.new("TextLabel")
-AfkLabel.Size = UDim2.new(0, 80, 0, 20)
-AfkLabel.Position = UDim2.new(0, 8, 0, 124)
-AfkLabel.BackgroundTransparency = 1
-AfkLabel.Font = Enum.Font.GothamMedium
-AfkLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-AfkLabel.TextSize = 13
-AfkLabel.Text = "Anti-AFK"
-AfkLabel.TextXAlignment = Enum.TextXAlignment.Left
-AfkLabel.ZIndex = 100000
-AfkLabel.Parent = MainFrame
-
-local ToggleBG = Instance.new("TextButton")
-ToggleBG.Size = UDim2.new(0, 36, 0, 18)
-ToggleBG.Position = UDim2.new(0, 95, 0, 125)
-ToggleBG.BackgroundColor3 = Color3.fromRGB(30, 25, 22)
-ToggleBG.Text = ""
-ToggleBG.ZIndex = 100000
-ToggleBG.Parent = MainFrame
-
-local ToggleStroke = Instance.new("UIStroke")
-ToggleStroke.Color = Color3.fromRGB(55, 48, 40)
-ToggleStroke.Thickness = 1
-ToggleStroke.Parent = ToggleBG
-
-local ToggleCorner = Instance.new("UICorner")
-ToggleCorner.CornerRadius = UDim.new(0, 9)
-ToggleCorner.Parent = ToggleBG
-
-local ToggleSlider = Instance.new("Frame")
-ToggleSlider.Size = UDim2.new(0, 14, 0, 14)
-ToggleSlider.Position = UDim2.new(0, 2, 0, 2)
-ToggleSlider.BackgroundColor3 = Color3.fromRGB(120, 110, 100)
-ToggleSlider.BorderSizePixel = 0
-ToggleSlider.ZIndex = 100005
-ToggleSlider.Parent = ToggleBG
-
-local SliderCorner = Instance.new("UICorner")
-SliderCorner.CornerRadius = UDim.new(0, 7)
-SliderCorner.Parent = ToggleSlider
-
 local dragging, dragInput, dragStart, startPos
 local resizing = false
 local resizeStartPos, resizeStartSize
@@ -330,16 +246,6 @@ UserInputService.InputChanged:Connect(function(input)
         IncomeLabel.Position = UDim2.new(0, 8, 0, newY * 0.42)
         TimeLabel.Size = UDim2.new(1, -16, 0, newY * 0.09)
         TimeLabel.Position = UDim2.new(0, 8, 0, newY * 0.53)
-        KeyLabel.Size = UDim2.new(0, newX * 0.33, 0, newY * 0.13)
-        KeyLabel.Position = UDim2.new(0, 8, 0, newY * 0.68)
-        KeyToggleBG.Size = UDim2.new(0, newX * 0.15, 0, newY * 0.12)
-        KeyToggleBG.Position = UDim2.new(0, 8 + (newX * 0.36), 0, newY * 0.68)
-        KeyToggleSlider.Size = UDim2.new(0, (newY * 0.12) - 4, 0, (newY * 0.12) - 4)
-        AfkLabel.Size = UDim2.new(0, newX * 0.33, 0, newY * 0.13)
-        AfkLabel.Position = UDim2.new(0, 8, 0, newY * 0.82)
-        ToggleBG.Size = UDim2.new(0, newX * 0.15, 0, newY * 0.12)
-        ToggleBG.Position = UDim2.new(0, 8 + (newX * 0.36), 0, newY * 0.83)
-        ToggleSlider.Size = UDim2.new(0, (newY * 0.12) - 4, 0, (newY * 0.12) - 4)
     end
 end)
 
@@ -418,81 +324,6 @@ if knobsVal then
         end
     end)
 end
-
-local autoKeyEnabled = false
-KeyToggleBG.MouseButton1Click:Connect(function()
-    autoKeyEnabled = not autoKeyEnabled
-    if autoKeyEnabled then
-        TweenService:Create(KeyToggleBG, TweenInfo.new(Config.TweenTime), {BackgroundColor3 = Color3.fromRGB(45, 38, 33)}):Play()
-        TweenService:Create(KeyToggleStroke, TweenInfo.new(Config.TweenTime), {Color = Color3.fromRGB(240, 180, 50)}):Play()
-        TweenService:Create(KeyToggleSlider, TweenInfo.new(Config.TweenTime), {Position = UDim2.new(1, -KeyToggleSlider.Size.X.Offset - 2, 0, 2), BackgroundColor3 = Color3.fromRGB(240, 180, 50)}):Play()
-    else
-        TweenService:Create(KeyToggleBG, TweenInfo.new(Config.TweenTime), {BackgroundColor3 = Color3.fromRGB(30, 25, 22)}):Play()
-        TweenService:Create(KeyToggleStroke, TweenInfo.new(Config.TweenTime), {Color = Color3.fromRGB(55, 48, 40)}):Play()
-        TweenService:Create(KeyToggleSlider, TweenInfo.new(Config.TweenTime), {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(120, 110, 100)}):Play()
-    end
-end)
-
-task.spawn(function()
-    while true do
-        task.wait(1)
-        if autoKeyEnabled then
-            for _, gui in ipairs(PlayerGui:GetChildren()) do
-                if gui:IsA("ScreenGui") and gui.Name ~= "KnobsTrackerGui" then
-                    local hasTitle = false
-                    local hasCopyLink = false
-                    local targetBox = nil
-                    local submitBtn = nil
-                    for _, desc in ipairs(gui:GetDescendants()) do
-                        if desc:IsA("TextLabel") and desc.Text == "KEY REQUIRED" then
-                            hasTitle = true
-                        end
-                        if desc:IsA("TextButton") and string.find(desc.Text, "COPY KEY LINK") then
-                            hasCopyLink = true
-                        end
-                        if desc:IsA("TextBox") and desc.PlaceholderText == "Enter key..." then
-                            targetBox = desc
-                        end
-                        if desc:IsA("TextButton") and desc.Text == "SUBMIT" then
-                            submitBtn = desc
-                        end
-                    end
-                    if hasTitle and hasCopyLink and targetBox and submitBtn then
-                        targetBox.Text = Config.AutoKey
-                        task.wait(0.1)
-                        submitBtn:Activate()
-                        break
-                    end
-                end
-            end
-        end
-    end
-end)
-
-local antiAfkEnabled = false
-ToggleBG.MouseButton1Click:Connect(function()
-    antiAfkEnabled = not antiAfkEnabled
-    if antiAfkEnabled then
-        TweenService:Create(ToggleBG, TweenInfo.new(Config.TweenTime), {BackgroundColor3 = Color3.fromRGB(45, 38, 33)}):Play()
-        TweenService:Create(ToggleStroke, TweenInfo.new(Config.TweenTime), {Color = Color3.fromRGB(240, 180, 50)}):Play()
-        TweenService:Create(ToggleSlider, TweenInfo.new(Config.TweenTime), {Position = UDim2.new(1, -ToggleSlider.Size.X.Offset - 2, 0, 2), BackgroundColor3 = Color3.fromRGB(240, 180, 50)}):Play()
-    else
-        TweenService:Create(ToggleBG, TweenInfo.new(Config.TweenTime), {BackgroundColor3 = Color3.fromRGB(30, 25, 22)}):Play()
-        TweenService:Create(ToggleStroke, TweenInfo.new(Config.TweenTime), {Color = Color3.fromRGB(55, 48, 40)}):Play()
-        TweenService:Create(ToggleSlider, TweenInfo.new(Config.TweenTime), {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(120, 110, 100)}):Play()
-    end
-end)
-
-task.spawn(function()
-    while true do
-        task.wait(5)
-        if antiAfkEnabled then
-            pcall(function()
-                VirtualUser:ClickButton1(Vector2.new(10, 10))
-            end)
-        end
-    end
-end)
 
 task.spawn(function()
     while true do
